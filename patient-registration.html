@@ -10,8 +10,20 @@
         input.invalid,
         select.invalid,
         textarea.invalid {
-            border: 2px solid #c62828;
-            background-color: #fff5f5;
+            border: 2px solid #c62828 !important;
+            background-color: #fff5f5 !important;
+        }
+        input[type="radio"].invalid,
+        input[type="checkbox"].invalid {
+            outline: 2px solid #c62828 !important;
+            outline-offset: 2px;
+        }
+        .error-msg {
+            color: #c62828;
+            font-size: 0.88em;
+            margin-left: 8px;
+            font-weight: 500;
+            vertical-align: middle;
         }
     </style>
 
@@ -26,19 +38,20 @@
 
             <label for = "name">Patient Name:</label>
             <input type = "text" id = "name" name = "name" placeholder="Enter your Full name" autofocus>
-            <span id = "nameError" style="color:red;"></span><br><br>
+            <span id = "nameError" class="error-msg"></span><br><br>
 
             <label for = "age">Age:</label>
-            <input type = "number" id = "age" name = "age" placeholder="Enter your Age" required><br><br>
+            <input type = "number" id = "age" name = "age" placeholder="Enter your Age" required>
+            <span id = "ageError" class="error-msg"></span><br><br>
 
             <label>Gender:</label>
             <label><input type="radio" id="genderMale" name="Gender" value="Male">Male</label>
             <label><input type="radio" id="genderFemale" name="Gender" value="Female">Female</label>
-            <span id = "genderError" style="color:red;"></span><br><br>
+            <span id = "genderError" class="error-msg"></span><br><br>
 
             <label for = "address">Address:</label>
             <input type = "text" id = "address" name = "address" placeholder="Enter your Address">
-            <span id = "addressError" style="color:red;"></span><br><br>
+            <span id = "addressError" class="error-msg"></span><br><br>
 
         </fieldset>
         <fieldset>
@@ -47,11 +60,11 @@
 
             <label for = "mono">Mobile Number:</label>
             <input type = "tel" id = "mono" name = "mobilenumber">
-            <span id = "monoError" style="color:red;"></span><br><br>
+            <span id = "monoError" class="error-msg"></span><br><br>
 
             <label for = "email">Email:</label>
             <input type = "text" id = "email" name = "email" placeholder="arjunpathlabs@gmail.com">
-            <span id = "emailError" style="color:red;"></span>
+            <span id = "emailError" class="error-msg"></span><br><br>
 
         </fieldset>
 
@@ -61,7 +74,7 @@
 
             <label for="dob">DOB:</label>
             <input type="date" id="dob" name="dob">
-            <span id = "dobError" style="color:red;"></span><br><br>
+            <span id = "dobError" class="error-msg"></span><br><br>
 
             <label for="bloodgroup">Blood Group:</label>
             <select id="bloodgroup" name="bloodgroup">
@@ -75,11 +88,11 @@
                 <option value="AB+">AB+</option>
                 <option value="AB-">AB-</option>
             </select>
-            <span id = "bloodgroupError" style="color:red;"></span><br><br>
+            <span id = "bloodgroupError" class="error-msg"></span><br><br>
 
             <label for="regdate">Registration Date:</label>
             <input type="date" id="regdate" name="regdate">
-            <span id = "regdateError" style="color:red;"></span><br><br>
+            <span id = "regdateError" class="error-msg"></span><br><br>
 
             <label for="dept">Department:</label>
             <select id="dept" name="dept">
@@ -88,17 +101,19 @@
                 <option value="Pathology">Pathology</option>
                 <option value="Cardiology">Cardiology</option>
             </select>
-            <span id = "deptError" style="color:red;"></span><br><br>
+            <span id = "deptError" class="error-msg"></span><br><br>
 
             <label>Test Selection:</label>
             <label><input type="checkbox" id="testCBC" name="testsel" value="CBC"> CBC</label>
             <label><input type="checkbox" id="testHbA1c" name="testsel" value="HbA1c"> HbA1c</label>
             <label><input type="checkbox" id="testLFT" name="testsel" value="LFT"> LFT</label>
             <label><input type="checkbox" id="testKFT" name="testsel" value="KFT"> KFT</label>
-            <label><input type="checkbox" id="testECG" name="testsel" value="ECG"> ECG</label><br><br>
+            <label><input type="checkbox" id="testECG" name="testsel" value="ECG"> ECG</label>
+            <span id = "testError" class="error-msg"></span><br><br>
 
             <label for="pad">Preferred Appointment Date:</label>
-            <input type="date" id="pad" name="pad"><br><br>
+            <input type="date" id="pad" name="pad">
+            <span id = "padError" class="error-msg"></span><br><br>
 
         </fieldset>
 
@@ -108,10 +123,12 @@
 
             <label>Sample Collection Preference:</label>
             <label><input type="radio" id="scpHome" name="scp" value="Hc" required> Home Collection</label>
-            <label><input type="radio" id="scpLab" name="scp" value="Vl" required> Visit Lab</label><br><br>    
+            <label><input type="radio" id="scpLab" name="scp" value="Vl" required> Visit Lab</label>
+            <span id = "scpError" class="error-msg"></span><br><br>    
 
             <label for="udp">Upload Doctor Prescription:</label>
-            <input type="file" id="udp" name="udp">
+            <input type="file" id="udp" name="udp" accept=".pdf,.jpg,.jpeg,.png">
+            <span id = "udpError" class="error-msg"></span>
 
         </fieldset>
 
@@ -129,136 +146,482 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 $(document).ready(function () {
+    var formSubmitted = false;
 
-        $("form").on("submit", function (e) {
-
-        e.preventDefault();
-
-        var isValid = true;
-
-        var name = $("#name").val().trim();
-        var namePattern = /^[A-Za-z ]+$/;
-
-        if (name === "") {
-            $("#nameError").text("Name cannot be empty");
-            $("#name").addClass("invalid");
-            isValid = false;
-        } else if (!namePattern.test(name)) {
-            $("#nameError").text("Name should contain only letters and spaces");
-            $("#name").addClass("invalid");
-            isValid = false;
-        } else {
-            $("#nameError").text("");
-            $("#name").removeClass("invalid");
-        }
-
-        var address = $("#address").val().trim();
-
-        if (address === "") {
-            $("#addressError").text("Address cannot be empty");
-            $("#address").addClass("invalid");
-            isValid = false;
-        } else {
-            $("#addressError").text("");
-            $("#address").removeClass("invalid");
-        }
-
-                var mono = $("#mono").val().trim();
-        var monoPattern = /^[6-9][0-9]{9}$/;
-
-        if (mono === "") {
-            $("#monoError").text("Mobile number cannot be empty");
-            $("#mono").addClass("invalid");
-            isValid = false;
-        } else if (!monoPattern.test(mono)) {
-            $("#monoError").text("Enter a valid 10-digit Indian mobile number (starts with 6-9)");
-            $("#mono").addClass("invalid");
-            isValid = false;
-        } else {
-            $("#monoError").text("");
-            $("#mono").removeClass("invalid");
-        }
-
-        var email = $("#email").val().trim();
-        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (email === "") {
-            $("#emailError").text("Email cannot be empty");
-            $("#email").addClass("invalid");
-            isValid = false;
-        } else if (!emailPattern.test(email)) {
-            $("#emailError").text("Enter a valid email address");
-            $("#email").addClass("invalid");
-            isValid = false;
-        } else {
-            $("#emailError").text("");
-            $("#email").removeClass("invalid");
-        }
-
-                if ($("input[name='Gender']:checked").length === 0) {
-            $("#genderError").text("Please select a gender");
-            isValid = false;
-        } else {
-            $("#genderError").text("");
-        }
-
-        if ($("#bloodgroup").val() === "") {
-            $("#bloodgroupError").text("Please select a blood group");
-            $("#bloodgroup").addClass("invalid");
-            isValid = false;
-        } else {
-            $("#bloodgroupError").text("");
-            $("#bloodgroup").removeClass("invalid");
-        }
-
-        if ($("#dept").val() === "") {
-            $("#deptError").text("Please select a department");
-            $("#dept").addClass("invalid");
-            isValid = false;
-        } else {
-            $("#deptError").text("");
-            $("#dept").removeClass("invalid");
-        }
-
+    function getMidnightToday() {
         var today = new Date();
         today.setHours(0, 0, 0, 0);
+        return today;
+    }
 
-        var dob = $("#dob").val();
+    // Helper to decide if error styling/text should be displayed
+    function shouldShowError($el, eventType) {
+        return formSubmitted || $el.hasClass("invalid") || eventType === "blur";
+    }
 
-        if (dob === "") {
-            $("#dobError").text("Date of birth cannot be empty");
-            $("#dob").addClass("invalid");
-            isValid = false;
-        } else if (new Date(dob + "T00:00:00") > today) {
-            $("#dobError").text("Date of birth cannot be in the future");
-            $("#dob").addClass("invalid");
-            isValid = false;
+    // --- Validation Functions for each field ---
+
+    // 1. Patient Name
+    function validateName(showError) {
+        var val = $("#name").val().trim();
+        var namePattern = /^[A-Za-z ]+$/;
+
+        if (val === "") {
+            if (showError) {
+                $("#nameError").text("Name cannot be empty");
+                $("#name").addClass("invalid");
+            }
+            return false;
+        } else if (!namePattern.test(val)) {
+            if (showError) {
+                $("#nameError").text("Name should contain only letters and spaces");
+                $("#name").addClass("invalid");
+            }
+            return false;
+        } else if (val.length < 2) {
+            if (showError) {
+                $("#nameError").text("Name must be at least 2 characters long");
+                $("#name").addClass("invalid");
+            }
+            return false;
         } else {
+            // Valid - immediately remove alert
+            $("#nameError").text("");
+            $("#name").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 2. Age
+    function validateAge(showError) {
+        var val = $("#age").val().trim();
+        var num = Number(val);
+
+        if (val === "") {
+            if (showError) {
+                $("#ageError").text("Age cannot be empty");
+                $("#age").addClass("invalid");
+            }
+            return false;
+        } else if (!/^\d+$/.test(val) || num < 1 || num > 120) {
+            if (showError) {
+                $("#ageError").text("Enter a valid age between 1 and 120");
+                $("#age").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#ageError").text("");
+            $("#age").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 3. Gender
+    function validateGender(showError) {
+        var isChecked = $("input[name='Gender']:checked").length > 0;
+        if (!isChecked) {
+            if (showError) {
+                $("#genderError").text("Please select a gender");
+                $("input[name='Gender']").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#genderError").text("");
+            $("input[name='Gender']").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 4. Address
+    function validateAddress(showError) {
+        var val = $("#address").val().trim();
+
+        if (val === "") {
+            if (showError) {
+                $("#addressError").text("Address cannot be empty");
+                $("#address").addClass("invalid");
+            }
+            return false;
+        } else if (val.length < 5) {
+            if (showError) {
+                $("#addressError").text("Address must be at least 5 characters long");
+                $("#address").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#addressError").text("");
+            $("#address").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 5. Mobile Number
+    function validateMobile(showError) {
+        var val = $("#mono").val().trim();
+        var monoPattern = /^[6-9][0-9]{9}$/;
+
+        if (val === "") {
+            if (showError) {
+                $("#monoError").text("Mobile number cannot be empty");
+                $("#mono").addClass("invalid");
+            }
+            return false;
+        } else if (!monoPattern.test(val)) {
+            if (showError) {
+                $("#monoError").text("Enter a valid 10-digit Indian mobile number (starts with 6-9)");
+                $("#mono").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#monoError").text("");
+            $("#mono").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 6. Email
+    function validateEmail(showError) {
+        var val = $("#email").val().trim();
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+        if (val === "") {
+            if (showError) {
+                $("#emailError").text("Email cannot be empty");
+                $("#email").addClass("invalid");
+            }
+            return false;
+        } else if (!emailPattern.test(val)) {
+            if (showError) {
+                $("#emailError").text("Enter a valid email address (e.g. user@example.com)");
+                $("#email").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#emailError").text("");
+            $("#email").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 7. Date of Birth
+    function validateDob(showError) {
+        var val = $("#dob").val();
+        var today = getMidnightToday();
+
+        if (!val) {
+            if (showError) {
+                $("#dobError").text("Date of birth cannot be empty");
+                $("#dob").addClass("invalid");
+            }
+            return false;
+        }
+
+        var d = new Date(val + "T00:00:00");
+        var minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 125);
+
+        if (isNaN(d.getTime())) {
+            if (showError) {
+                $("#dobError").text("Enter a valid date of birth");
+                $("#dob").addClass("invalid");
+            }
+            return false;
+        } else if (d > today) {
+            if (showError) {
+                $("#dobError").text("Date of birth cannot be in the future");
+                $("#dob").addClass("invalid");
+            }
+            return false;
+        } else if (d < minDate) {
+            if (showError) {
+                $("#dobError").text("Date of birth cannot be more than 120 years ago");
+                $("#dob").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
             $("#dobError").text("");
             $("#dob").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 8. Blood Group
+    function validateBloodGroup(showError) {
+        var val = $("#bloodgroup").val();
+
+        if (val === "" || val === null) {
+            if (showError) {
+                $("#bloodgroupError").text("Please select a blood group");
+                $("#bloodgroup").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#bloodgroupError").text("");
+            $("#bloodgroup").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 9. Registration Date
+    function validateRegDate(showError) {
+        var val = $("#regdate").val();
+        var today = getMidnightToday();
+
+        if (!val) {
+            if (showError) {
+                $("#regdateError").text("Registration date cannot be empty");
+                $("#regdate").addClass("invalid");
+            }
+            return false;
         }
 
-        var regdate = $("#regdate").val();
-
-        if (regdate === "") {
-            $("#regdateError").text("Registration date cannot be empty");
-            $("#regdate").addClass("invalid");
-            isValid = false;
-        } else if (new Date(regdate + "T00:00:00") > today) {
-            $("#regdateError").text("Registration date cannot be in the future");
-            $("#regdate").addClass("invalid");
-            isValid = false;
+        var d = new Date(val + "T00:00:00");
+        if (isNaN(d.getTime())) {
+            if (showError) {
+                $("#regdateError").text("Enter a valid registration date");
+                $("#regdate").addClass("invalid");
+            }
+            return false;
+        } else if (d > today) {
+            if (showError) {
+                $("#regdateError").text("Registration date cannot be in the future");
+                $("#regdate").addClass("invalid");
+            }
+            return false;
         } else {
+            // Valid - immediately remove alert
             $("#regdateError").text("");
             $("#regdate").removeClass("invalid");
+            return true;
         }
+    }
+
+    // 10. Department
+    function validateDept(showError) {
+        var val = $("#dept").val();
+
+        if (val === "" || val === null) {
+            if (showError) {
+                $("#deptError").text("Please select a department");
+                $("#dept").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#deptError").text("");
+            $("#dept").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 11. Test Selection
+    function validateTestSelection(showError) {
+        var isChecked = $("input[name='testsel']:checked").length > 0;
+
+        if (!isChecked) {
+            if (showError) {
+                $("#testError").text("Please select at least one test");
+                $("input[name='testsel']").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#testError").text("");
+            $("input[name='testsel']").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 12. Preferred Appointment Date
+    function validatePad(showError) {
+        var val = $("#pad").val();
+        var today = getMidnightToday();
+
+        if (!val) {
+            if (showError) {
+                $("#padError").text("Preferred appointment date cannot be empty");
+                $("#pad").addClass("invalid");
+            }
+            return false;
+        }
+
+        var d = new Date(val + "T00:00:00");
+        if (isNaN(d.getTime())) {
+            if (showError) {
+                $("#padError").text("Enter a valid appointment date");
+                $("#pad").addClass("invalid");
+            }
+            return false;
+        } else if (d < today) {
+            if (showError) {
+                $("#padError").text("Appointment date cannot be in the past");
+                $("#pad").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#padError").text("");
+            $("#pad").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 13. Sample Collection Preference
+    function validateScp(showError) {
+        var isChecked = $("input[name='scp']:checked").length > 0;
+
+        if (!isChecked) {
+            if (showError) {
+                $("#scpError").text("Please select sample collection preference");
+                $("input[name='scp']").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#scpError").text("");
+            $("input[name='scp']").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // 14. Doctor Prescription Upload
+    function validatePrescription(showError) {
+        var fileInput = $("#udp")[0];
+        var file = fileInput && fileInput.files ? fileInput.files[0] : null;
+
+        if (!file) {
+            if (showError) {
+                $("#udpError").text("Please upload doctor's prescription");
+                $("#udp").addClass("invalid");
+            }
+            return false;
+        }
+
+        var allowedExtensions = /\.(pdf|jpe?g|png)$/i;
+        if (!allowedExtensions.test(file.name)) {
+            if (showError) {
+                $("#udpError").text("Allowed formats: PDF, JPG, JPEG, PNG");
+                $("#udp").addClass("invalid");
+            }
+            return false;
+        } else {
+            // Valid - immediately remove alert
+            $("#udpError").text("");
+            $("#udp").removeClass("invalid");
+            return true;
+        }
+    }
+
+    // --- Real-time Reactive Listeners: Remove alert as soon as correct data format is entered ---
+
+    $("#name").on("input keyup blur", function (e) {
+        validateName(shouldShowError($(this), e.type));
+    });
+
+    $("#age").on("input keyup change blur", function (e) {
+        validateAge(shouldShowError($(this), e.type));
+    });
+
+    $("input[name='Gender']").on("change", function () {
+        validateGender(true);
+    });
+
+    $("#address").on("input keyup blur", function (e) {
+        validateAddress(shouldShowError($(this), e.type));
+    });
+
+    $("#mono").on("input keyup blur", function (e) {
+        validateMobile(shouldShowError($(this), e.type));
+    });
+
+    $("#email").on("input keyup blur", function (e) {
+        validateEmail(shouldShowError($(this), e.type));
+    });
+
+    $("#dob").on("input change blur", function (e) {
+        validateDob(shouldShowError($(this), e.type));
+    });
+
+    $("#bloodgroup").on("change blur", function (e) {
+        validateBloodGroup(shouldShowError($(this), e.type));
+    });
+
+    $("#regdate").on("input change blur", function (e) {
+        validateRegDate(shouldShowError($(this), e.type));
+    });
+
+    $("#dept").on("change blur", function (e) {
+        validateDept(shouldShowError($(this), e.type));
+    });
+
+    $("input[name='testsel']").on("change", function () {
+        validateTestSelection(true);
+    });
+
+    $("#pad").on("input change blur", function (e) {
+        validatePad(shouldShowError($(this), e.type));
+    });
+
+    $("input[name='scp']").on("change", function () {
+        validateScp(true);
+    });
+
+    $("#udp").on("change", function () {
+        validatePrescription(true);
+    });
+
+    // --- Submit Handler (when user clicks "Register") ---
+    $("form").on("submit", function (e) {
+        e.preventDefault();
+        formSubmitted = true;
+
+        var isNameValid = validateName(true);
+        var isAgeValid = validateAge(true);
+        var isGenderValid = validateGender(true);
+        var isAddressValid = validateAddress(true);
+        var isMobileValid = validateMobile(true);
+        var isEmailValid = validateEmail(true);
+        var isDobValid = validateDob(true);
+        var isBloodGroupValid = validateBloodGroup(true);
+        var isRegDateValid = validateRegDate(true);
+        var isDeptValid = validateDept(true);
+        var isTestValid = validateTestSelection(true);
+        var isPadValid = validatePad(true);
+        var isScpValid = validateScp(true);
+        var isPrescriptionValid = validatePrescription(true);
+
+        var isValid = isNameValid && isAgeValid && isGenderValid &&
+                      isAddressValid && isMobileValid && isEmailValid &&
+                      isDobValid && isBloodGroupValid && isRegDateValid &&
+                      isDeptValid && isTestValid && isPadValid &&
+                      isScpValid && isPrescriptionValid;
 
         if (isValid) {
             alert("Registration successful");
+        } else {
+            // Smoothly focus first invalid field
+            var $firstInvalid = $(".invalid").first();
+            if ($firstInvalid.length) {
+                $firstInvalid.focus();
+            }
         }
-
     });
 
+    // --- Reset Handler: Return all fields and alerts to normal ---
+    $("form").on("reset", function () {
+        formSubmitted = false;
+        setTimeout(function () {
+            $(".invalid").removeClass("invalid");
+            $(".error-msg").text("");
+        }, 10);
+    });
 });
 </script>
 

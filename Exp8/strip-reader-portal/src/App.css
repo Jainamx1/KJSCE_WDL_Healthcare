@@ -5,3 +5,66 @@ nav a:hover { text-decoration: underline; }
 h1 { color: #1a4d8f; }
 .record { background: #fff; border: 1px solid #999; border-radius: 8px; padding: 10px; width: 480px; max-width: 90%; margin: 10px auto; }
 p { max-width: 600px; margin-left: auto; margin-right: auto; }
+
+/* Patient Registration Form Styles */
+fieldset {
+  border: 2px solid rgb(54, 119, 189);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #ffffff;
+}
+
+legend {
+  font-weight: bold;
+  color: rgb(10, 110, 160);
+  padding: 0 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+select {
+  width: 220px;
+  padding: 6px 8px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  margin-right: 5px;
+}
+
+input.invalid,
+select.invalid {
+  border: 2px solid #c62828 !important;
+  background-color: #fff5f5 !important;
+}
+
+input[type="radio"].invalid,
+input[type="checkbox"].invalid {
+  outline: 2px solid #c62828 !important;
+  outline-offset: 2px;
+}
+
+.error-msg {
+  color: #c62828;
+  font-size: 0.88em;
+  margin-left: 8px;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+button {
+  background-color: rgb(0, 120, 200);
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+button:hover {
+  background-color: rgb(5, 57, 120);
+}
